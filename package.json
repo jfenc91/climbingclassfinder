@@ -1,0 +1,11 @@
+{
+  "name": "climbing-checker",
+  "version": "1.0.0",
+  "description": "Finds new lead climbing classes",
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@sendgrid/mail": "^6.3.1",
+    "puppeteer": "^1.6.2"
+  }
+}

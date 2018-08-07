@@ -1,0 +1,14 @@
+service: climbing-class-check
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+
+functions:
+  cron:
+    handler: handler.run
+    timeout: 45
+    memorySize: 512
+    events:
+      # Invoke Lambda function every minute
+      - schedule: rate(10 minutes)
