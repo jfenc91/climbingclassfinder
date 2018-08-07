@@ -10,11 +10,11 @@ module.exports.run = (event, context) => {
 
     const puppeteer = require('puppeteer');
 
-    const browser = await puppeteer.launch({'headless':true, executablePath: './headless-chromium', args: ['--no-sandbox', '--disable-setuid-sandbox']})
+    const browser = await puppeteer.launch({'headless':true, executablePath: './headless-chromium', args: ['--no-sandbox', '--disable-setuid-sandbox', '--single-process']})
     const page = await browser.newPage()
 
     await page.setViewport({width:960,height:768});
-    await page.tracing.start({path: 'trace.json', categories: ['devtools.timeline']})
+    await page.tracing.start({path: '/tmp/trace.json', categories: ['devtools.timeline']})
     const data = await page.goto('https://touchstoneclimbing.com/mission-cliffs/calendar/');
     console.log('waiting for initial cal load')
     await page.waitForSelector('#ai1ec-calendar-view > table > thead > tr > th:nth-child(4)')
@@ -25,7 +25,7 @@ module.exports.run = (event, context) => {
 
     function sendClassesAdded() {
       const sgMail = require('@sendgrid/mail');
-      sgMail.setApiKey('NOKEY');
+      sgMail.setApiKey('NOKEy');
       const msg = {
 	to: 'jfenc91@gmail.com',
 	from: 'jfenc91@gmail.com',
@@ -43,12 +43,20 @@ module.exports.run = (event, context) => {
       sendClassesAdded()
       console.log('Classes Added!!')
     }
-    process.exit()
-    const handler = await page.$x('//*[@id="ai1ec-calendar-view"]/div[1]/div[2]/div/a[4]');
-    await handler[0].click()
-    process.exit()
-	  //await page.waitForSelector('#ai1ec-calendar-view > div.ai1ec-clearfix > div.ai1ec-title-buttons.ai1ec-btn-toolbar > div > a.ai1ec-minical-trigger.ai1ec-btn.ai1ec-btn-sm.ai1ec-btn-default.ai1ec-tooltip-trigger > i')
+	  //const handler = await page.$x('//*[@id="ai1ec-calendar-view"]/div[1]/div[2]/div/a[4]');
+    
+    //await page.waitFor(2000);
+    await page.$eval('#ai1ec-calendar-view > div.ai1ec-clearfix > div.ai1ec-title-buttons.ai1ec-btn-toolbar > div > a.ai1ec-next-month.ai1ec-load-view.ai1ec-btn.ai1ec-btn-sm.ai1ec-btn-default', x => x.click())
 
+	  
+    //const handler = await page.$x('//*[@id="ai1ec-calendar-view"]/div[1]/div[2]/div/a[4]');
+    //console.log(handler)
+    //console.log(handler[0])
+    //await handler[0].click()
+	  //await page.waitForSelector('#ai1ec-calendar-view > div.ai1ec-clearfix > div.ai1ec-title-buttons.ai1ec-btn-toolbar > div > a.ai1ec-minical-trigger.ai1ec-btn.ai1ec-btn-sm.ai1ec-btn-default.ai1ec-tooltip-trigger > i')
+   // console.log(await page.content())
+	  //await page.click('#ai1ec-calendar-view > div.ai1ec-clearfix > div.ai1ec-title-buttons.ai1ec-btn-toolbar > div > a.ai1ec-next-month.ai1ec-load-view.ai1ec-btn.ai1ec-btn-sm.ai1ec-btn-default')
+    
     console.log('waiting for cal month change')	  
     await page.waitForFunction('document.querySelector(\'#ai1ec-calendar-view > div.ai1ec-clearfix > div.ai1ec-title-buttons.ai1ec-btn-toolbar > div > a.ai1ec-minical-trigger.ai1ec-btn.ai1ec-btn-sm.ai1ec-btn-default.ai1ec-tooltip-trigger > span.ai1ec-calendar-title\').innerHTML == "September 2018"');
 
